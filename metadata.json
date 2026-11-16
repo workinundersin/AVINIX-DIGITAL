@@ -1,0 +1,6 @@
+{
+  "name": "AVENIX DIGITAL",
+  "description": "Official website and management platform for AVENIX DIGITAL — custom website development, mobile application engineering, pricing packages, portfolio, and admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
