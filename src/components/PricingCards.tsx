@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check } from 'lucide-react';
+import { DEFAULT_PRICING } from '../data/defaults';
 import type { PricingConfig } from '../types/avenix';
 
 interface PricingCardsProps {
@@ -13,17 +14,28 @@ function mapPackageToBudgetParam(price: number): string {
 }
 
 export function PricingCards({ pricing }: PricingCardsProps) {
+  const packages =
+    Array.isArray(pricing?.packages) && pricing.packages.length > 0
+      ? pricing.packages
+      : DEFAULT_PRICING.packages;
+  const appDevelopment =
+    pricing?.appDevelopment && typeof pricing.appDevelopment.startingPrice === 'number'
+      ? pricing.appDevelopment
+      : DEFAULT_PRICING.appDevelopment;
+  const disclaimer = pricing?.disclaimer || DEFAULT_PRICING.disclaimer;
+
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-stretch">
-        {pricing.packages.map((pkg) => {
-          const isFeatured = pkg.featured;
+        {packages.map((pkg) => {
+          const isFeatured = Boolean(pkg.featured);
           const budgetParam = mapPackageToBudgetParam(pkg.price);
+          const features = Array.isArray(pkg.features) ? pkg.features : [];
 
           return (
             <div
               key={pkg.id}
-              className={`flex flex-col justify-between rounded-2xl p-7 transition-all duration-150 ${
+              className={`flex flex-col justify-between rounded-2xl p-6 sm:p-7 transition-all duration-150 ${
                 isFeatured
                   ? 'bg-[#0B1730] text-white border-2 border-[#2563EB] shadow-xl lg:-my-2'
                   : 'bg-white text-[#1E293B] border border-slate-200 hover:border-[#2563EB]/40'
@@ -71,8 +83,8 @@ export function PricingCards({ pricing }: PricingCardsProps) {
                         isFeatured ? 'text-white' : 'text-[#0B1730]'
                       }`}
                     >
-                      {pkg.currency}
-                      {pkg.price.toLocaleString('en-IN')}
+                      {pkg.currency || '₹'}
+                      {Number(pkg.price).toLocaleString('en-IN')}
                     </span>
                     <span
                       className={`text-xs ${
@@ -92,7 +104,7 @@ export function PricingCards({ pricing }: PricingCardsProps) {
                   Included in this package:
                 </p>
                 <ul className="space-y-3 mb-8">
-                  {pkg.features.map((feature) => (
+                  {features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2.5 text-sm">
                       <Check
                         className={`h-4 w-4 mt-0.5 shrink-0 ${
@@ -113,7 +125,7 @@ export function PricingCards({ pricing }: PricingCardsProps) {
                 )}&budget=${encodeURIComponent(budgetParam)}&package=${encodeURIComponent(
                   pkg.name,
                 )}`}
-                className={`inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors whitespace-nowrap ${
+                className={`inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors whitespace-nowrap ${
                   isFeatured
                     ? 'bg-[#2563EB] text-white hover:bg-[#1D4ED8]'
                     : 'bg-[#0B1730] text-white hover:bg-[#16274C]'
@@ -137,12 +149,12 @@ export function PricingCards({ pricing }: PricingCardsProps) {
             </h3>
             <span className="text-sm text-slate-500">·</span>
             <span className="font-mono-tabular text-xl font-bold text-[#2563EB]">
-              Starting at {pricing.appDevelopment.currency}
-              {pricing.appDevelopment.startingPrice.toLocaleString('en-IN')}
+              Starting at {appDevelopment.currency || '₹'}
+              {Number(appDevelopment.startingPrice).toLocaleString('en-IN')}
             </span>
           </div>
           <p className="text-sm text-slate-600 leading-relaxed">
-            {pricing.appDevelopment.note}
+            {appDevelopment.note}
           </p>
         </div>
         <Link
@@ -151,7 +163,7 @@ export function PricingCards({ pricing }: PricingCardsProps) {
           )}&budget=${encodeURIComponent('₹10,000+')}&package=${encodeURIComponent(
             'App Development',
           )}`}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#2563EB] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1D4ED8] transition-colors whitespace-nowrap shrink-0"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[#2563EB] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1D4ED8] transition-colors whitespace-nowrap shrink-0"
         >
           Request a Custom Quote
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -159,7 +171,7 @@ export function PricingCards({ pricing }: PricingCardsProps) {
       </div>
 
       <p className="text-xs text-slate-500 leading-relaxed border-t border-slate-200 pt-4">
-        Note: {pricing.disclaimer}
+        Note: {disclaimer}
       </p>
     </div>
   );

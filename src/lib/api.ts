@@ -46,12 +46,16 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
     credentials: 'include',
   });
 
+  const contentType = response.headers.get('content-type') || '';
   const text = await response.text();
   let parsed: unknown = {};
   if (text) {
     try {
       parsed = JSON.parse(text);
     } catch {
+      if (!response.ok || !contentType.includes('application/json')) {
+        throw new Error(`Expected JSON response from ${url} (received ${contentType || 'non-JSON'}).`);
+      }
       parsed = { error: text };
     }
   }
