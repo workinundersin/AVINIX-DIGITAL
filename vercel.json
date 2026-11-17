@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api/|uploads/|src/assets/).*)",
+      "source": "/((?!api/|uploads/|src/assets/|googlec09614612bd08e05\\.html).*)",
       "destination": "/index.html"
     }
   ]
